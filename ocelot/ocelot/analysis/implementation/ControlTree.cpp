@@ -877,19 +877,19 @@ namespace analysis
 				CGm0.begin(), CGm0.end(), 
 				std::back_inserter(result1), 
 				boost::bind(&analysis::ControlTree::_lexicographical_compare, 
-					boost::ref(this), _1, _2));
+					this, _1, _2));
 		std::set_difference(
 				CGi0.begin(), CGi0.end(), 
 				CGm0.begin(), CGm0.end(), 
 				std::back_inserter(result2),
 				boost::bind(&analysis::ControlTree::_lexicographical_compare, 
-					boost::ref(this), _1, _2));
+					this, _1, _2));
 		std::set_difference(
 				CGm0.begin(), CGm0.end(), 
 				CGi0.begin(), CGi0.end(), 
 				std::back_inserter(result3),
 				boost::bind(&analysis::ControlTree::_lexicographical_compare, 
-					boost::ref(this), _1, _2));
+					this, _1, _2));
 
 		if (!result1.empty() && !result2.empty() && !result3.empty()) 
 			return true;
@@ -925,7 +925,7 @@ namespace analysis
 							std::back_inserter(result), 
 							boost::bind(
 								&analysis::ControlTree::_lexicographical_compare, 
-								boost::ref(this), _1, _2));
+								this, _1, _2));
 					mhg = result;
 				}
 			}
@@ -1140,21 +1140,21 @@ namespace analysis
 							std::back_inserter(result1),
 							boost::bind(
 								&analysis::ControlTree::_lexicographical_compare, 
-								boost::ref(this), _1, _2));
+								this, _1, _2));
 					std::set_difference(
 							result1.begin(), result1.end(),
 							ie.begin(), ie.end(), 
 							std::back_inserter(result2),
 							boost::bind(
 								&analysis::ControlTree::_lexicographical_compare, 
-								boost::ref(this), _1, _2));
+								this, _1, _2));
 					std::set_union(
 							result2.begin(), result2.end(),
 							J.begin(), J.end(), 
 							std::back_inserter(true_part),
 							boost::bind(
 								&analysis::ControlTree::_lexicographical_compare,
-								boost::ref(this), _1, _2));
+								this, _1, _2));
 
 					NodeVector false_part;
 					NodeVector ifie = NodeVector(1, iFwdBranch->first); 
@@ -1167,7 +1167,7 @@ namespace analysis
 							std::back_inserter(false_part),
 							boost::bind(
 								&analysis::ControlTree::_lexicographical_compare,
-								boost::ref(this), _1, _2));
+								this, _1, _2));
 
 					// a forward-copy transformation is applied
 					_forward_copy_transform(*iFwdBranch, true_part);

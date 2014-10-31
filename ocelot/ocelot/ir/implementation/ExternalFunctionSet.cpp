@@ -25,8 +25,8 @@
 #include <llvm/Transforms/Scalar.h>
 #include <llvm/PassManager.h>
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
-#include <llvm/Assembly/Parser.h>
-#include <llvm/Analysis/Verifier.h>
+#include <llvm/AsmParser/Parser.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include <llvm/Support/SourceMgr.h>
@@ -323,9 +323,11 @@ static llvm::Function* jitFunction(
 	
 	// verify the function
 	std::string verifyError;
+	llvm::raw_string_ostream OS(verifyError);
 	
-	if(llvm::verifyModule(*m, llvm::ReturnStatusAction, &verifyError))
+	if(llvm::verifyModule(*m, &OS))
 	{
+		OS.flush();
 		report("   Checking kernel failed, dumping code:\n" 
 			<< kernel.numberedCode());
 		throw hydrazine::Exception("LLVM Verifier failed for kernel: " 

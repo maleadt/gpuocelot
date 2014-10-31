@@ -114,7 +114,7 @@ def getBoost(env):
 	elif os.name == 'posix':
 		ext = ""
 		if os.path.exists(os.path.join(lib_path, 'libboost_system-mt.so')):
-			ext = "-mt"
+			ext = ""
 			
 		libs = ['-lboost_system' + ext, '-lboost_filesystem' + ext,
 			'-lboost_thread' + ext]
@@ -213,7 +213,8 @@ def getLLVMPaths(enabled):
 	            '-lLLVMRuntimeDyld', '-lLLVMExecutionEngine', '-lLLVMCodeGen',
 	            '-lLLVMScalarOpts', '-lLLVMInstCombine', '-lLLVMTransformUtils',
 	            '-lLLVMipa', '-lLLVMAnalysis', '-lLLVMTarget', '-lLLVMMC',
-	            '-lLLVMObject', '-lLLVMCore', '-lLLVMSupport']
+	            '-lLLVMObject', '-lLLVMCore', '-lLLVMSupport',
+	            '-lncurses', '-lz']
 	
 	if os.name == 'nt':
 		lflags =  []
@@ -275,6 +276,7 @@ def getLLVMPaths(enabled):
 	for lib in libs:
 		if lib[0:2] == "-L":
 			libs.remove(lib)
+	libs.extend(['-lncurses', '-lz'])
 
 	# remove inc_path from cflags
 	for flag in cflags:
@@ -302,15 +304,15 @@ OldEnvironment = Environment;
 # a compiler switch of interest to the specific switch implementing the feature
 gCompilerOptions = {
 		'gcc' : {'warn_all' : '-Wall',
-			'warn_errors' : '-Werror',
+			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g', 
 			'exception_handling' : '', 'standard': ''},
 		'g++' : {'warn_all' : '-Wall',
-			'warn_errors' : '-Werror',
+			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g', 
 			'exception_handling' : '', 'standard': '-std=c++0x'},
 		'c++' : {'warn_all' : '-Wall',
-			'warn_errors' : '-Werror',
+			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g',
 			'exception_handling' : '',
 			'standard': ['-stdlib=libc++', '-std=c++0x', '-pthread']},
@@ -519,7 +521,7 @@ def Environment():
 		allowed_values = ('release', 'debug')))
 
 	# add a variable to treat warnings as errors
-	vars.Add(BoolVariable('Werror', 'Treat warnings as errors', 1))
+	vars.Add(BoolVariable('Wall', 'Treat warnings as errors', 1))
 
 	# add a variable to handle warnings
 	vars.Add(BoolVariable('Wall', 'Enable all compilation warnings', 1))
@@ -599,11 +601,11 @@ def Environment():
 
 	# get C compiler switches
 	env.AppendUnique(CFLAGS = getCFLAGS(env['mode'], env['Wall'], \
-		env['Werror'], env.subst('$CC')))
+		env['Wall'], env.subst('$CC')))
 
 	# get CXX compiler switches
 	env.AppendUnique(CXXFLAGS = getCXXFLAGS(env['mode'], env['Wall'], \
-		env['Werror'], env.subst('$CXX')))
+		env['Wall'], env.subst('$CXX')))
 
 	# get linker switches
 	env.AppendUnique(LINKFLAGS = getLINKFLAGS(env['mode'], env.subst('$LINK')))
