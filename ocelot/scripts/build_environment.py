@@ -114,8 +114,8 @@ def getBoost(env):
 	elif os.name == 'posix':
 		ext = ""
 		if os.path.exists(os.path.join(lib_path, 'libboost_system-mt.so')):
-			ext = ""
-			
+			ext = "-mt"
+
 		libs = ['-lboost_system' + ext, '-lboost_filesystem' + ext,
 			'-lboost_thread' + ext]
 	else:
@@ -311,6 +311,14 @@ gCompilerOptions = {
 			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g', 
 			'exception_handling' : '', 'standard': '-std=c++0x'},
+		'clang' : {'warn_all' : '-Wall',
+			'warn_errors' : '-Wall',
+			'optimization' : '-O2', 'debug' : '-g', 
+			'exception_handling' : '', 'standard': ''},
+		'clang++' : {'warn_all' : '-Wall',
+			'warn_errors' : '-Wall',
+			'optimization' : '-O2', 'debug' : '-g', 
+			'exception_handling' : '', 'standard': '-std=c++11'},
 		'c++' : {'warn_all' : '-Wall',
 			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g',
@@ -334,10 +342,12 @@ def updateCompilerOptionsFromEnv(env):
 # this dictionary maps the name of a linker program to a dictionary mapping the name of
 # a linker switch of interest to the specific switch implementing the feature
 gLinkerOptions = {
-		'gcc'  : {'debug' : ''},
-		'g++'  : {'debug' : ''},
-		'c++'  : {'debug' : ''},
-		'link' : {'debug' : '/debug'}
+		'gcc'    : {'debug' : ''},
+		'g++'    : {'debug' : ''},
+		'clang'  : {'debug' : ''},
+		'clang++': {'debug' : ''},
+		'c++'    : {'debug' : ''},
+		'link'   : {'debug' : '/debug'}
 	}
 
 
@@ -481,25 +491,23 @@ def defineConfigFlags(env):
 
 	env.Replace(OCELOT_CONFIG_FLAGS = configFlags)
 
-def importEnvironment():
-	env = {  }
-	
+def importEnvironment(env):
 	if 'PATH' in os.environ:
-		env['PATH'] = os.environ['PATH']
+		env.Append(PATH = os.environ['PATH'])
 	
 	if 'CXX' in os.environ:
-		env['CXX'] = os.environ['CXX']
+		env.Replace(CXX = os.environ['CXX'])
 	
 	if 'CC' in os.environ:
-		env['CC'] = os.environ['CC']
+		env.Replace(CC = os.environ['CC'])
 	
 	if 'TMP' in os.environ:
-		env['TMP'] = os.environ['TMP']
+		env.Replace(TMP = os.environ['TMP'])
 	
 	if 'LD_LIBRARY_PATH' in os.environ:
-		env['LD_LIBRARY_PATH'] = os.environ['LD_LIBRARY_PATH']
+		env.Append(LD_LIBRARY_PATH = os.environ['LD_LIBRARY_PATH'])
 
-	return env
+	return
 
 def Environment():
 	vars = Variables()
@@ -574,8 +582,9 @@ def Environment():
 		'"install")', 0))
 
 	# create an Environment
-	env = OldEnvironment(ENV = importEnvironment(), \
-		tools = getTools(), variables = vars)
+
+	env = OldEnvironment(tools = getTools(), variables = vars)
+	importEnvironment(env)
 
 	# disable the cuda runtime
 	if env['enable_cuda_runtime']:
