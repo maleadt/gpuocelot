@@ -482,7 +482,7 @@ CUresult cuda::CudaDriverFrontend::cuDeviceGetAttribute(int *pi, CUdevice_attrib
 			*pi = 0;
 			result = CUDA_ERROR_NOT_FOUND;
 			report("cuDeviceGetAttribute() - unsupported attribute requested: " << attrib);
-			assert(0 && "cuDeviceGetAttribute() - unsupported attribute requested: ");
+			assert(0 && "cuDeviceGetAttribute() - unsupported attribute requested");
 			break;
 	}
 	
@@ -1294,12 +1294,12 @@ CUresult cuda::CudaDriverFrontend::cuFuncSetSharedSize(
 			result = CUDA_SUCCESS;
 		}
 		else {
-			report("cuParamSetSize() - kernel not found");
+			report("cuFuncSetSharedSize() - kernel not found");
 			result = CUDA_ERROR_INVALID_CONTEXT;
 		}
 	}
 	else {
-		report("cuParamSetSize() - context not valid");
+		report("cuFuncSetSharedSize() - context not valid");
 		result = CUDA_ERROR_INVALID_CONTEXT;
 	}
 	_unbind();
@@ -1891,7 +1891,7 @@ CUresult cuda::CudaDriverFrontend::cuEventRecord( CUevent hEvent, CUstream hStre
 		}
 	}
 	else {
-		report("cuParamSetSize() - context not valid");
+		report("cuEventRecord() - context not valid");
 		result = CUDA_ERROR_INVALID_CONTEXT;
 	}
 	_unbind();
@@ -1919,7 +1919,7 @@ CUresult cuda::CudaDriverFrontend::cuEventQuery( CUevent hEvent ) {
 		}
 	}
 	else {
-		report("cuParamSetSize() - context not valid");
+		report("cuEventRecord() - context not valid");
 		result = CUDA_ERROR_INVALID_CONTEXT;
 	}
 	_unbind();
