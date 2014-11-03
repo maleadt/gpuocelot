@@ -340,6 +340,12 @@ namespace cuda
 				int grid_height);
 			virtual CUresult cuLaunchGridAsync( CUfunction f, int grid_width, 
 				int grid_height, CUstream hStream );
+			virtual CUresult cuLaunchKernel( CUfunction f,
+				unsigned int gridDimX, unsigned int gridDimY,
+				unsigned int gridDimZ, unsigned int blockDimX,
+				unsigned int blockDimY, unsigned int blockDimZ,
+				unsigned int sharedMemBytes, CUstream hStream,
+				void ** kernelParams, void ** extra);
 
 			/************************************
 			**

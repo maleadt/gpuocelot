@@ -197,6 +197,7 @@ namespace cuda
 		DynLink(cuLaunch);
 		DynLink(cuLaunchGrid);
 		DynLink(cuLaunchGridAsync);
+		DynLink(cuLaunchKernel);
 		DynLink(cuEventCreate);
 		DynLink(cuEventRecord);
 		DynLink(cuEventQuery);
@@ -913,6 +914,19 @@ namespace cuda
 		CHECK();
 		return (*_interface.cuLaunchGridAsync)(f, grid_width, grid_height, 
 			hStream);
+	}
+
+	CUresult CudaDriver::cuLaunchKernel( CUfunction f,
+		unsigned int gridDimX, unsigned int gridDimY,
+		unsigned int gridDimZ, unsigned int blockDimX,
+		unsigned int blockDimY, unsigned int blockDimZ,
+		unsigned int sharedMemBytes, CUstream hStream,
+		void ** kernelParams, void ** extra )
+	{
+		CHECK();
+		return (*_interface.cuLaunchKernel)(f, gridDimX, gridDimY,
+			gridDimZ, blockDimX, blockDimY, blockDimZ,
+			sharedMemBytes, hStream, kernelParams, extra);
 	}
 
 

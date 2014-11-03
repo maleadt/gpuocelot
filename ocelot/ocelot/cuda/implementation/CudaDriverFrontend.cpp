@@ -679,8 +679,7 @@ CUresult cuda::CudaDriverFrontend::cuModuleLoad(CUmodule *cuModule, const char *
 
 CUresult cuda::CudaDriverFrontend::cuModuleLoadData(CUmodule *module, 
 	const void *image) {
-	assert(0 && "unimplemented");
-	return CUDA_ERROR_NOT_FOUND;
+	return cuModuleLoadDataEx(module, image, 0, nullptr, nullptr);
 }
 
 CUresult cuda::CudaDriverFrontend::cuModuleLoadDataEx(CUmodule *cuModule, 
@@ -1734,7 +1733,119 @@ CUresult cuda::CudaDriverFrontend::cuLaunchGrid (CUfunction hfunc, int grid_widt
 
 CUresult cuda::CudaDriverFrontend::cuLaunchGridAsync( CUfunction f, int grid_width, 
 	int grid_height, CUstream hStream ) {
+	// TODO: hStream
 	return cuLaunchGrid(f, grid_width, grid_height);
+}
+
+CUresult cuda::CudaDriverFrontend::cuLaunchKernel (CUfunction hfunc,
+	unsigned int gridDimX,
+	unsigned int gridDimY,
+	unsigned int gridDimZ,
+	unsigned int blockDimX,
+	unsigned int blockDimY,
+	unsigned int blockDimZ,
+	unsigned int sharedMemBytes,
+	CUstream hStream,
+	void ** kernelParams,
+	void ** extra) {
+	// TODO: hStream
+
+	CUresult result = CUDA_ERROR_NOT_FOUND;
+	Context *context = _bind();
+	if (context) {
+		ir::PTXKernel *ptxKernel = reinterpret_cast<ir::PTXKernel *>(hfunc);
+		if (ptxKernel) {
+
+			if (kernelParams != nullptr) {
+				size_t offset = 0;
+				for (unsigned int i = 0; i < ptxKernel->arguments.size(); i++) {
+					const ir::Parameter& param = ptxKernel->arguments[i];
+					const size_t size = param.getSize();
+					std::cout << "Copying argument " << i << ", counting " << size << " bytes" << std::endl;
+
+					// set an argument
+					std::memcpy(context->_hostThreadContext.parameterBlock + offset, kernelParams[i], size);
+			
+					context->_hostThreadContext.parameterIndices.push_back(offset);
+					context->_hostThreadContext.parameterSizes.push_back(size);
+
+					offset += size;
+				}
+			} else {
+				report("cuLaunchKernel() - single-buffer argument passing is unimplemented");
+				result = CUDA_ERROR_INVALID_VALUE;
+				_unbind();
+				return result;
+			}
+			context->_hostThreadContext.mapParameters(ptxKernel);
+			context->_launchConfiguration.gridDim.x = gridDimX;
+			context->_launchConfiguration.gridDim.y = gridDimY;
+			context->_launchConfiguration.gridDim.z = gridDimZ;
+			context->_launchConfiguration.blockDim.x = blockDimX;
+			context->_launchConfiguration.blockDim.y = blockDimY;
+			context->_launchConfiguration.blockDim.z = blockDimZ;
+			context->_launchConfiguration.sharedMemory = sharedMemBytes;
+			
+			report("kernel launch (" << ptxKernel->name 
+				<< ") on thread " << boost::this_thread::get_id());
+	
+			try {
+				trace::TraceGeneratorVector traceGens;
+
+
+				traceGens = context->_hostThreadContext.persistentTraceGenerators;
+				traceGens.insert(traceGens.end(),
+					context->_hostThreadContext.nextTraceGenerators.begin(),
+					context->_hostThreadContext.nextTraceGenerators.end());
+
+				context->_getDevice().launch(ptxKernel->module->path(), 
+					ptxKernel->name, 
+					convert(context->_launchConfiguration.gridDim), 
+					convert(context->_launchConfiguration.blockDim), 
+					context->_launchConfiguration.sharedMemory, 
+					context->_hostThreadContext.parameterBlock, 
+					context->_hostThreadContext.parameterBlockSize, traceGens);
+					
+				report(" launch completed successfully");	
+			}
+			catch( const executive::RuntimeException& e ) {
+				std::cerr << "==Ocelot== PTX Emulator failed to run kernel \"" 
+					<< ptxKernel->name 
+					<< "\" with exception: \n";
+				std::cerr << e.toString()  
+					<< "\n" << std::flush;
+				_unbind();
+				throw;
+			}
+			catch( const std::exception& e ) {
+				std::cerr << "==Ocelot== " << context->_getDevice().properties().name
+					<< " failed to run kernel \""
+					<< ptxKernel->name
+					<< "\" with exception: \n";
+				std::cerr << e.what()
+					<< "\n" << std::flush;
+				_unbind();
+				throw;
+			}
+			catch(...) {
+				_unbind();
+				throw;
+			}
+
+			result = CUDA_SUCCESS;
+		}
+		else {
+			report("cuLaunchKernel() - kernel not found");
+			result = CUDA_ERROR_INVALID_CONTEXT;
+		}
+	}
+	else {
+		report("cuLaunchKernel() - context not valid");
+		result = CUDA_ERROR_INVALID_CONTEXT;
+	}
+	_unbind();
+	return result;
+
 }
 
 

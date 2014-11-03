@@ -231,6 +231,12 @@ class CudaDriver
 					int grid_height);
 				CUresult (*cuLaunchGridAsync)( CUfunction f, 
 					int grid_width, int grid_height, CUstream hStream );
+				CUresult (*cuLaunchKernel)( CUfunction hfunc,
+					unsigned int gridDimX, unsigned int gridDimY,
+					unsigned int gridDimZ, unsigned int blockDimX,
+					unsigned int blockDimY, unsigned int blockDimZ,
+					unsigned int sharedMemBytes, CUstream hStream,
+					void ** kernelParams, void ** extra);
 				CUresult (*cuEventCreate)( CUevent *phEvent, 
 					unsigned int Flags );
 				CUresult (*cuEventRecord)( CUevent hEvent, 
@@ -601,6 +607,12 @@ class CudaDriver
 			int grid_height);
 		static CUresult cuLaunchGridAsync( CUfunction f, int grid_width, 
 			int grid_height, CUstream hStream );
+		static CUresult cuLaunchKernel( CUfunction hfunc,
+			unsigned int gridDimX, unsigned int gridDimY,
+			unsigned int gridDimZ, unsigned int blockDimX,
+			unsigned int blockDimY, unsigned int blockDimZ,
+			unsigned int sharedMemBytes, CUstream hStream,
+			void ** kernelParams, void ** extra);
 
 		/************************************
 		**

@@ -5334,6 +5334,10 @@ CUresult CUDAAPI cuLaunchGrid(CUfunction f, int grid_width, int grid_height);
  */
 CUresult CUDAAPI cuLaunchGridAsync(CUfunction f, int grid_width, int grid_height, CUstream hStream);
 
+CUresult CUDAAPI cuLaunchKernel(CUfunction f, unsigned int gridDimX, unsigned int gridDimY,
+    unsigned int gridDimZ, unsigned int blockDimX, unsigned int blockDimY, unsigned int blockDimZ,
+    unsigned int sharedMemBytes, CUstream hStream, void ** kernelParams, void ** extra);
+
 /**
  * \defgroup CUDA_EXEC_DEPRECATED Execution Control [DEPRECATED]
  *

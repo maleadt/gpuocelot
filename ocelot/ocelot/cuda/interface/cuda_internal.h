@@ -5054,6 +5054,7 @@ CUresult CUDAAPI cuEventElapsedTime(float *pMilliseconds, CUevent hStart, CUeven
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z);
 
@@ -5085,6 +5086,7 @@ CUresult CUDAAPI cuFuncSetBlockShape(CUfunction hfunc, int x, int y, int z);
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuFuncSetSharedSize(CUfunction hfunc, unsigned int bytes);
 
@@ -5142,6 +5144,7 @@ CUresult CUDAAPI cuFuncSetSharedSize(CUfunction hfunc, unsigned int bytes);
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunction hfunc);
 
@@ -5190,6 +5193,7 @@ CUresult CUDAAPI cuFuncGetAttribute(int *pi, CUfunction_attribute attrib, CUfunc
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config);
 
@@ -5219,6 +5223,7 @@ CUresult CUDAAPI cuFuncSetCacheConfig(CUfunction hfunc, CUfunc_cache config);
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuParamSetSize(CUfunction hfunc, unsigned int numbytes);
 
@@ -5249,6 +5254,7 @@ CUresult CUDAAPI cuParamSetSize(CUfunction hfunc, unsigned int numbytes);
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuParamSeti(CUfunction hfunc, int offset, unsigned int value);
 
@@ -5279,6 +5285,7 @@ CUresult CUDAAPI cuParamSeti(CUfunction hfunc, int offset, unsigned int value);
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuParamSetf(CUfunction hfunc, int offset, float value);
 
@@ -5311,6 +5318,7 @@ CUresult CUDAAPI cuParamSetf(CUfunction hfunc, int offset, float value);
  * ::cuLaunch,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuParamSetv(CUfunction hfunc, int offset, void *ptr, unsigned int numbytes);
 
@@ -5345,6 +5353,7 @@ CUresult CUDAAPI cuParamSetv(CUfunction hfunc, int offset, void *ptr, unsigned i
  * ::cuParamSetv,
  * ::cuLaunchGrid,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuLaunch(CUfunction f);
 
@@ -5381,6 +5390,7 @@ CUresult CUDAAPI cuLaunch(CUfunction f);
  * ::cuParamSetv,
  * ::cuLaunch,
  * ::cuLaunchGridAsync
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuLaunchGrid(CUfunction f, int grid_width, int grid_height);
 
@@ -5421,8 +5431,13 @@ CUresult CUDAAPI cuLaunchGrid(CUfunction f, int grid_width, int grid_height);
  * ::cuParamSetv,
  * ::cuLaunch,
  * ::cuLaunchGrid
+ * ::cuLaunchKernel
  */
 CUresult CUDAAPI cuLaunchGridAsync(CUfunction f, int grid_width, int grid_height, CUstream hStream);
+
+CUresult CUDAAPI cuLaunchKernel(CUfunction f, unsigned int gridDimX, unsigned int gridDimY,
+    unsigned int gridDimZ, unsigned int blockDimX, unsigned int blockDimY, unsigned int blockDimZ,
+    unsigned int sharedMemBytes, CUstream hStream, void ** kernelParams, void ** extra);
 
 /**
  * \defgroup CUDA_EXEC_DEPRECATED Execution Control [DEPRECATED]

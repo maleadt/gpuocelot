@@ -167,6 +167,11 @@ CUresult Function(cuCtxDestroy)( CUcontext ctx ) {
 	RETURN( CudaApi::get()->cuCtxDestroy(ctx) );
 }
 
+CUresult FunctionV(cuCtxDestroy)( CUcontext ctx ) {
+	trace();
+	RETURN( CudaApi::get()->cuCtxDestroy(ctx) );
+}
+
 CUresult Function(cuCtxAttach)(CUcontext *pctx, unsigned int flags) {
 	trace();	
 	RETURN( CudaApi::get()->cuCtxAttach(pctx, flags) );
@@ -754,6 +759,18 @@ CUresult Function(cuLaunchGridAsync)( CUfunction f, int grid_width,
 	int grid_height, CUstream hStream ) {
 	trace();	
 	RETURN( CudaApi::get()->cuLaunchGridAsync(f, grid_width, grid_height, hStream) );
+}
+
+CUresult Function(cuLaunchKernel)( CUfunction f,
+	unsigned int gridDimX, unsigned int gridDimY,
+	unsigned int gridDimZ, unsigned int blockDimX,
+	unsigned int blockDimY, unsigned int blockDimZ,
+	unsigned int sharedMemBytes, CUstream hStream,
+	void ** kernelParams, void ** extra ) {
+	trace();	
+	RETURN( CudaApi::get()->cuLaunchKernel(f, gridDimX, gridDimY, gridDimZ,
+		blockDimX, blockDimY, blockDimZ, sharedMemBytes, hStream,
+		kernelParams, extra) );
 }
 
 

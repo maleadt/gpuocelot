@@ -1065,6 +1065,28 @@ CUresult util::KernelExtractorDriver::cuLaunchGridAsync( CUfunction f, int grid_
 	RETURN(res);
 }
 
+CUresult util::KernelExtractorDriver::cuLaunch( CUfunction hfunc,
+			unsigned int gridDimX, unsigned int gridDimY,
+			unsigned int gridDimZ, unsigned int blockDimX,
+			unsigned int blockDimY, unsigned int blockDimZ,
+			unsigned int sharedMemBytes, CUstream hStream,
+			void ** kernelParams, void ** extra) {
+	trace();	
+	
+	if (enabled) {
+		kernelLaunch(f, gridDimX, gridDimY, gridDimX, blockDimX,
+			blockDimY, blockDimX, sharedMemBytes, hStream,
+			kernelParams, extra);
+	}
+	CUresult res = cudaDriver.cuLaunch(f, gridDimX, gridDimY, gridDimX,
+		blockDimX, blockDimY, blockDimX, sharedMemBytes, hStream,
+		kernelParams, extra);
+	if (enabled) {
+		kernelReturn(res);
+	}
+	RETURN(res);
+}
+
 
 /************************************
 **

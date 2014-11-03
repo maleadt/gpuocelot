@@ -596,6 +596,14 @@ CUresult cuda::CudaDriverInterface::cuLaunchGridAsync( CUfunction f, int grid_wi
 	return CUDA_ERROR_NOT_FOUND;
 }
 
+CUresult cuda::CudaDriverInterface::cuLaunchKernel( CUfunction hfunc,
+	unsigned int gridDimX, unsigned int gridDimY, unsigned int gridDimZ,
+	unsigned int blockDimX, unsigned int blockDimY, unsigned int blockDimZ,
+	unsigned int sharedMemBytes, CUstream hStream, void ** kernelParams,
+	void ** extra) {
+	return CUDA_ERROR_NOT_FOUND;
+}
+
 
 /************************************
 **
