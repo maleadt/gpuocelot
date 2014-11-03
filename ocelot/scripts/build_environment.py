@@ -433,24 +433,18 @@ def getLINKFLAGS(mode, LINK):
 
 def getVersion(base):
 	try:
-		svn_path = which('svn')
+		git_path = which('git')
 	except:
-		print 'Failed to get subversion revision'
+		print 'Failed to get repository version (git not found)'
 		return base + '.0'
 
-	process = subprocess.Popen('svn info ..', shell=True,
-		stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	process = subprocess.Popen('git rev-parse --short HEAD', shell=True,
+		stdout=subprocess.PIPE)
+	revision = process.communicate()[0].rstrip('\n')
 
-	(svn_info, std_err_data) = process.communicate()
-	
-	match = re.search('Revision: ', svn_info)
-	revision = 'unknown'
-	if match:
-		end = re.search('\n', svn_info[match.end():])
-		if end:
-			revision = svn_info[match.end():match.end()+end.start()]
-	else:
-		print 'Failed to get SVN repository version!'
+	if process.returncode != 0:
+		print 'Failed to get repository version (failure running git)'
+		revision = 'unknown'
 
 	return base + '.' + revision
 
