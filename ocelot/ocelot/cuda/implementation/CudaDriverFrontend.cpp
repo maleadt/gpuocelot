@@ -1718,12 +1718,12 @@ CUresult cuda::CudaDriverFrontend::cuLaunchGrid (CUfunction hfunc, int grid_widt
 			result = CUDA_SUCCESS;
 		}
 		else {
-			report("cuLaunch() - kernel not found");
+			report("cuLaunchGrid() - kernel not found");
 			result = CUDA_ERROR_INVALID_CONTEXT;
 		}
 	}
 	else {
-		report("cuLaunch() - context not valid");
+		report("cuLaunchGrid() - context not valid");
 		result = CUDA_ERROR_INVALID_CONTEXT;
 	}
 	_unbind();
@@ -1791,7 +1791,6 @@ CUresult cuda::CudaDriverFrontend::cuLaunchKernel (CUfunction hfunc,
 	
 			try {
 				trace::TraceGeneratorVector traceGens;
-
 
 				traceGens = context->_hostThreadContext.persistentTraceGenerators;
 				traceGens.insert(traceGens.end(),
