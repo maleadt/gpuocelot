@@ -1761,7 +1761,6 @@ CUresult cuda::CudaDriverFrontend::cuLaunchKernel (CUfunction hfunc,
 				for (unsigned int i = 0; i < ptxKernel->arguments.size(); i++) {
 					const ir::Parameter& param = ptxKernel->arguments[i];
 					const size_t size = param.getSize();
-					std::cout << "Copying argument " << i << ", counting " << size << " bytes" << std::endl;
 
 					// set an argument
 					std::memcpy(context->_hostThreadContext.parameterBlock + offset, kernelParams[i], size);
