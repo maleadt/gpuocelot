@@ -303,7 +303,7 @@ CUresult cuda::CudaDriverFrontend::cuDeviceGetName(char *name, int len, CUdevice
 	executive::Device *device = _devices.at(ordinal);
 	
 	std::string devName = device->properties().name;
-	std::memcpy(name, devName.c_str(), std::min(len, (int)devName.size()));
+	std::memcpy(name, devName.c_str(), std::min(len, (int)devName.size()+1));
 	result = CUDA_SUCCESS;
 	
 	_unlock();
