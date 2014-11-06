@@ -8,12 +8,11 @@
 #ifndef PTX_LEXER_H_INCLUDED
 #define PTX_LEXER_H_INCLUDED
 
-// FIXME: From the some version of bison, generated header contains yyparse
-// function prototype. Because it uses undeclared nested class and it contains
-// circular reference, we cannot build it with this prototype.
-// To avoid this compile error, we replace `yyparse(...)` to
-// `dummy_yyparse_to_avoid_compile_error(void)` by using C macro.
-#define yyparse(...) dummy_yyparse_to_avoid_compile_error(void)
+// FIXME: recent yacc versions generate a yyparse() declaration. Normally,
+//        we'd forward declare the %yyparams, but one of them is a nested class
+//        (PTXParser::State). Working around this, we get rid of the
+//        problematic declaration until we declare it ourselves.
+#define yyparse(...) defused_yyparse(void)
 #include <ptxgrammar.hpp>
 #undef yyparse
 
