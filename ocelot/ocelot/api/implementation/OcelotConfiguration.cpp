@@ -164,6 +164,7 @@ api::OcelotConfiguration::Executive::Executive():
 	asynchronousKernelLaunch(true),
 	port(2011),
 	host("127.0.0.1"),
+	reconvergenceMechanism(executive::ReconvergenceMechanism::Reconverge_IPDOM),
 	workerThreadLimit(-1),
 	warpSize(-1)
 {
