@@ -303,22 +303,16 @@ OldEnvironment = Environment;
 # this dictionary maps the name of a compiler program to a dictionary mapping the name of
 # a compiler switch of interest to the specific switch implementing the feature
 gCompilerOptions = {
-		'gcc' : {'warn_all' : '-Wall',
+		'default-c' : {
+			'warn_all' : '-Wall',
 			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g', 
 			'exception_handling' : '', 'standard': ''},
-		'g++' : {'warn_all' : '-Wall',
+		'default-c++' : {
+			'warn_all' : '-Wall',
 			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g', 
 			'exception_handling' : '', 'standard': '-std=c++0x'},
-		'clang' : {'warn_all' : '-Wall',
-			'warn_errors' : '-Wall',
-			'optimization' : '-O2', 'debug' : '-g', 
-			'exception_handling' : '', 'standard': ''},
-		'clang++' : {'warn_all' : '-Wall',
-			'warn_errors' : '-Wall',
-			'optimization' : '-O2', 'debug' : '-g', 
-			'exception_handling' : '', 'standard': '-std=c++11'},
 		'c++' : {'warn_all' : '-Wall',
 			'warn_errors' : '-Wall',
 			'optimization' : '-O2', 'debug' : '-g',
@@ -352,24 +346,29 @@ gLinkerOptions = {
 
 
 def getCFLAGS(mode, warn, warnings_as_errors, CC):
+	if CC in gCompilerOptions:
+		opts = gCompilerOptions[CC]
+	else:
+		opts = gCompilerOptions["default-c"]
+
 	result = []
 	if mode == 'release':
 		# turn on optimization
-		result.append(gCompilerOptions[CC]['optimization'])
+		result.append(opts['optimization'])
 	elif mode == 'debug':
 		# turn on debug mode
-		result.append(gCompilerOptions[CC]['debug'])
+		result.append(opts['debug'])
 		result.append('-DOCELOT_DEBUG')
 
 	if warn:
 		# turn on all warnings
-		result.append(gCompilerOptions[CC]['warn_all'])
+		result.append(opts['warn_all'])
 
 	if warnings_as_errors:
 		# treat warnings as errors
-		result.append(gCompilerOptions[CC]['warn_errors'])
+		result.append(opts['warn_errors'])
 
-	result.append(gCompilerOptions[CC]['standard'])
+	result.append(opts['standard'])
 
 	return result
 
@@ -394,29 +393,31 @@ def getLibCXXPaths():
 
 	return (inc_path, lib_path)
 
-def getCXXFLAGS(mode, warn, warnings_as_errors, CXX):
-	if not CXX in gCompilerOptions:
-		raise ValueError, 'Error: No support for compiler \'' + CXX + '\''
+def getCXXFLAGS(mode, warn, warnings_as_errors, CXX):	
+	if CXX in gCompilerOptions:
+		opts = gCompilerOptions[CXX]
+	else:
+		opts = gCompilerOptions["default-c++"]
 	
 	result = []
 	if mode == 'release':
 		# turn on optimization
-		result.append(gCompilerOptions[CXX]['optimization'])
+		result.append(opts['optimization'])
 	elif mode == 'debug':
 		# turn on debug mode
-		result.append(gCompilerOptions[CXX]['debug'])
+		result.append(opts['debug'])
 	# enable exception handling
-	result.append(gCompilerOptions[CXX]['exception_handling'])
+	result.append(opts['exception_handling'])
 
 	if warn:
 		# turn on all warnings
-		result.append(gCompilerOptions[CXX]['warn_all'])
+		result.append(opts['warn_all'])
 
 	if warnings_as_errors:
 		# treat warnings as errors
-		result.append(gCompilerOptions[CXX]['warn_errors'])
+		result.append(opts['warn_errors'])
 
-	result.append(gCompilerOptions[CXX]['standard'])
+	result.append(opts['standard'])
 
 	return result
 
