@@ -695,20 +695,21 @@ CUresult cuda::CudaDriverFrontend::cuModuleLoadDataEx(CUmodule *cuModule,
 		
 		std::stringstream ss;
 		ss << (const char *)image;
-		
-		std::stringstream modname;
-		modname << "ocelotModule" << context->_modules.size() << ".ptx";
+
+		char* tempname = strdup("/tmp/ocelotModuleXXXXXX.ptx");
+		mkstemps(tempname, 4);
+		std::string modname(tempname);
 		
 		{
-			std::ofstream file(modname.str().c_str());
+			std::ofstream file(modname.c_str());
 			file << (const char *)image;
 		}
 	
-		ModuleMap::iterator module = context->_modules.insert(std::make_pair(modname.str(), ir::Module())).first;
+		ModuleMap::iterator module = context->_modules.insert(std::make_pair(modname, ir::Module())).first;
 		
 		report("  created module, now loading..");
 
-		if (module->second.load(ss, modname.str())) {
+		if (module->second.load(ss, modname)) {
 			*cuModule = reinterpret_cast<CUmodule>(& module->second);
 			
 			report("  loaded PTX module, now loading into emulator");
