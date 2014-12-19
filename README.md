@@ -23,7 +23,11 @@ Short overview of changes compared to upstream:
 Requirements
 ------------
 
-* CUDA toolkit 5.0 (you only need the toolkit, not the actual driver)
+* Scons
+* CUDA toolkit <= 5.0 (you only need the toolkit, not the actual driver)
+* Appropriate GCC for the CUDA toolkit you picked
+* LLVM 3.5
+* Boost
 
 
 Compilation
@@ -39,9 +43,9 @@ Example compilation:
     CC=clang CXX=clang++ python2 build.py \
         --install -p $(PREFIX) -j$(JOBS)
 
-**Note**: if your main `gcc` binary is not compatible with CUDA 5.0 (i.e. it is
-more recent than gcc 4.6), you _will_ need to edit
-`ocelot/scripts/build_environment.py` and change the two `nvcc` command lines to
+**Note**: if your main `gcc` binary is not compatible with your CUDA toolkit
+version (for example, CUDA 5.0 requires gcc <= 4.6), you _will_ need to edit
+`ocelot/scripts/build_environment.py` and change the two `nvcc` invocations to
 include `-ccbin=gcc-4.6` (or something similar).
 
 **Note**: due to restrictions of the build system, make sure you only use
