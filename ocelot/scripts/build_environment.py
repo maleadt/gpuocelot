@@ -498,6 +498,8 @@ def importEnvironment(env):
 	
 	if 'TMP' in os.environ:
 		env.Replace(TMP = os.environ['TMP'])
+
+	env["ENV"].update(x for x in os.environ.items() if x[0].startswith("CCC_"))
 	
 	if 'LD_LIBRARY_PATH' in os.environ:
 		env.Append(LD_LIBRARY_PATH = os.environ['LD_LIBRARY_PATH'])
