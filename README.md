@@ -35,6 +35,7 @@ Make sure you do a recursive check-out, so the
 Example compilation:
 
     cd $(CHECKOUT_DIR)
+    CUDA_BIN_PATH=/opt/cuda-5.0/bin CUDA_LIB_PATH=/opt/cuda-5.0/lib CUDA_INC_PATH=/opt/cuda-5.0/include \
     CC=clang CXX=clang++ python2 build.py \
         --install -p $(PREFIX) -j$(JOBS)
 
@@ -42,6 +43,10 @@ Example compilation:
 more recent than gcc 4.6), you _will_ need to edit
 `ocelot/scripts/build_environment.py` and change the two `nvcc` command lines to
 include `-ccbin=gcc-4.6` (or something similar).
+
+**Note**: due to restrictions of the build system, make sure you only use
+absolute paths when passing information through environment variables, and
+always build with `--install`.
 
 
 Usage
