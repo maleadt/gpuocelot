@@ -1,0 +1,9 @@
+*.pyc
+
+.sconf_temp
+.sconsign.dblite
+config.log
+
+.debug_build
+.release_build
+
