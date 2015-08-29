@@ -52,6 +52,11 @@ include `-ccbin=gcc-4.6` (or something similar).
 absolute paths when passing information through environment variables, and
 always build with `--install`.
 
+**Note**: LLVM *needs* to be at version 3.5. If your distribution provides some
+other version, install and compile LLVM from source and point the build system
+to that installation's `llvm-config` binary by setting the `LLVM_CONFIG`
+environment variable before invoking `build.py`.
+
 
 Usage
 -----

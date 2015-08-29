@@ -194,64 +194,16 @@ def getGLEW(env, enabled):
 def getLLVMPaths(enabled):
 	"""Determines LLVM {have,bin,lib,include,cflags,lflags,libs} paths
 	
-	from user specified variables
-	
-	returns (have,bin_path,lib_path,inc_path,cflags,lflags,libs)
-	"""
-
-	# determine defaults
-	bin_path = ['/usr/local/bin']
-	lib_path = ['/usr/local/lib']
-	inc_path = ['/usr/local/include']
-	cflags   = ['-I/usr/local/include', '-D_DEBUG', '-D_GNU_SOURCE',
-	            '-D__STDC_CONSTANT_MACROS', '-D__STDC_FORMAT_MACROS',
-	            '-D__STDC_LIMIT_MACROS']
-	libs     = ['-lLLVMAsmParser', '-lLLVMX86CodeGen', '-lLLVMSelectionDAG',
-	            '-lLLVMAsmPrinter', '-lLLVMX86AsmParser', '-lLLVMMCParser',
-	            '-lLLVMX86Disassembler', '-lLLVMX86Desc', '-lLLVMX86Info',
-	            '-lLLVMX86AsmPrinter', '-lLLVMX86Utils', '-lLLVMJIT',
-	            '-lLLVMRuntimeDyld', '-lLLVMExecutionEngine', '-lLLVMCodeGen',
-	            '-lLLVMScalarOpts', '-lLLVMInstCombine', '-lLLVMTransformUtils',
-	            '-lLLVMipa', '-lLLVMAnalysis', '-lLLVMTarget', '-lLLVMMC',
-	            '-lLLVMObject', '-lLLVMCore', '-lLLVMSupport',
-	            '-lncurses', '-lz']
-	
-	if os.name == 'nt':
-		lflags =  []
-		cflags =  []
-	# Do we need this?
-	#	libs   += ['Shell32', 'Advapi32']
-	else:
-		lflags = ['-L/usr/local/lib', '-lpthread', '-ldl', '-lm']
-		libs   = ['-l' + l for l in libs]
-
-	# override defaults
-	if 'LLVM_BIN_PATH' in os.environ:
-		bin_path = [os.path.abspath(os.environ['LLVM_BIN_PATH'])]
-	if 'LLVM_LIB_PATH' in os.environ:
-		lib_path = [os.path.abspath(os.environ['LLVM_LIB_PATH'])]
-	if 'LLVM_INC_PATH' in os.environ:
-		inc_path = [os.path.abspath(os.environ['LLVM_INC_PATH'])]
-	if 'LLVM_CFLAGS' in os.environ:
-		cflags   = os.environ['LLVM_CFLAGS'].split()
-	if 'LLVM_LFLAGS' in os.environ:
-		lflags   = os.environ['LLVM_LFLAGS'].split()
-	if 'LLVM_LIBS' in os.environ:
-		libs     = os.environ['LLVM_LIBS'].split()
-	
-	return (True,bin_path,lib_path,inc_path,cflags,lflags,libs)
-
-def getLLVMPaths(enabled):
-	"""Determines LLVM {have,bin,lib,include,cflags,lflags,libs} paths
-	
 	returns (have,bin_path,lib_path,inc_path,cflags,lflags,libs)
 	"""
 	
 	if not enabled:
 		return (False, [], [], [], [], [], [])
 	
-	if 'USER_SPECIFIED_LLVM_PATHS' in os.environ:
-		return getUserSpecifiedLLVMPaths()
+	if 'LLVM_CONFIG' in os.environ:
+		llvm_config_path = os.environ['LLVM_CONFIG']
+		if not os.path.isfile(llvm_config_path):
+			raise ValueError, 'Error: invalid path to llvm-config specified. Is it an absolute path?'
 	else:
 		try:
 			llvm_config_path = which('llvm-config')
@@ -260,13 +212,13 @@ def getLLVMPaths(enabled):
 			return (False, [], [], [], [], [], [])
 	
 	# determine defaults
-	bin_path = os.popen('llvm-config --bindir').read().split()
-	lib_path = os.popen('llvm-config --libdir').read().split()
-	inc_path = os.popen('llvm-config --includedir').read().split()
-	cflags   = os.popen('llvm-config --cppflags').read().split()
-	lflags   = os.popen('llvm-config --ldflags').read().split()
-	libs     = os.popen('llvm-config --libs core jit native \
-		asmparser instcombine').read().split()
+	bin_path = os.popen('%s --bindir' % llvm_config_path).read().split()
+	lib_path = os.popen('%s --libdir' % llvm_config_path).read().split()
+	inc_path = os.popen('%s --includedir' % llvm_config_path).read().split()
+	cflags   = os.popen('%s --cppflags' % llvm_config_path).read().split()
+	lflags   = os.popen('%s --ldflags' % llvm_config_path).read().split()
+	libs     = os.popen('%s --libs core jit native \
+		asmparser instcombine' % llvm_config_path).read().split()
 	
 	# remove -DNDEBUG
 	if '-DNDEBUG' in cflags:
