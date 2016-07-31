@@ -1,6 +1,8 @@
 gpuocelot
 =========
 
+**NOTE**: this fork is not actively maintained anymore.
+
 About
 -----
 
@@ -18,6 +20,10 @@ Short overview of changes compared to upstream:
 * Add/extend/fix certain API calls (`cuLaunchKernel`, `cuCtxDestroy`,
   `cuLaunch`, `cuDeviceGetName`)
 * Small bugfixes
+
+Not that this fork happened before gpuocelot was available on
+[GitHub](https://github.com/gtcasl/gpuocelot), so there might be some differences
+between both code bases.
 
 
 Requirements
@@ -65,3 +71,4 @@ Compile and install gpuocelot into a directory you can load libraries from.
 Next, you either rename `libocelot.so` to `libcuda.so`, or you use something
 which knows about gpuocelot (like CUDA.jl does). After that, you can use the
 available symbols just as it were the official NVIDIA implementation.
+
